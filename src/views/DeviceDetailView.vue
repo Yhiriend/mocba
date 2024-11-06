@@ -16,7 +16,7 @@
         <LoaderSpinner :isLoading="isLoadingDeviceData"></LoaderSpinner>
         <CircularProgressBar
           v-if="!isLoadingDeviceData"
-          :percentage="deviceData?.charge"
+          :percentage="deviceData?.charge ?? 0"
         />
         <div v-if="!isLoadingDeviceData" class="content temp">
           <p>🌡️ {{ deviceData?.temperature }}°</p>
@@ -128,7 +128,7 @@ const desvinculateOnClick = () => {
     "Desvincular",
     "No seguirás recibiendo notificaciones de alerta de este dispositivo.",
     "warning",
-    (result) => {
+    (result: any) => {
       if (result.isConfirmed) {
         const deviceId = route.params.id as string;
         deviceService.desvinculateDevice(deviceId).then(() => {

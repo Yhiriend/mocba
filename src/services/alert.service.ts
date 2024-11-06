@@ -7,7 +7,7 @@ export class AlertService {
     title: string,
     message: string,
     type: AlertTypes,
-    callback: () => void
+    callback: (result: any) => void
   ) {
     Swal.fire({
       titleText: title,
