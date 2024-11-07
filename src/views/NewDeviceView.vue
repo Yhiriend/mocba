@@ -13,7 +13,7 @@
           <input
             type="text"
             id="llave"
-            v-model="llave"
+            v-model="key"
             placeholder="Llave del dispositivo"
             required
           />
@@ -23,7 +23,7 @@
           <input
             type="text"
             id="name"
-            v-model="llave"
+            v-model="name"
             placeholder="Nombre (opcional)"
             required
           />
@@ -35,7 +35,7 @@
           <input
             type="number"
             id="alert"
-            v-model="llave"
+            v-model="alert"
             placeholder="Establece un límite % (alerta opcional)"
             required
           />
@@ -53,12 +53,47 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ButtonBasic from "../components/ButtonBasic.vue";
+import deviceService from "../services/device.service";
+import { DeviceModel } from "../models/device.model";
+import { useAuhtStore } from "../stores/authStore";
+import toastService from "../services/toast.service";
 
 const isLoading = ref(false);
-const llave = ref("");
+const key = ref("");
+const name = ref("");
+const alert = ref("");
 
 const handleButtonClick = () => {};
-const handleSubmit = () => {};
+const handleSubmit = async () => {
+  isLoading.value = true;
+  const device: DeviceModel = {
+    id: key.value,
+    name: name.value,
+    charge: 100,
+    temperature: 25,
+    criticLevel: Number(alert.value),
+    isActive: true,
+    showAtHome: false,
+  };
+  const userId = useAuhtStore().getUserState.id;
+  try {
+    await deviceService.registerDevice(userId, device, key.value);
+    toastService.showToast(
+      "Registro exitoso!",
+      "Has agregado un nuevo dispositivo",
+      "success"
+    );
+  } catch (error) {
+    console.error(error);
+    toastService.showToast(
+      "Falló la vinculación",
+      "No se pudo vincular el dispositivo",
+      "error"
+    );
+  } finally {
+    isLoading.value = false;
+  }
+};
 </script>
 <style scoped>
 .wrapper {

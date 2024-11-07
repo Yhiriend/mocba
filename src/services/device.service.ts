@@ -3,8 +3,46 @@
 import { DeviceModel } from "../models/device.model";
 import { DEVICES } from "../models/constants/devices"; // Asegúrate de importar el array de dispositivos
 import { useAuhtStore } from "../stores/authStore";
+import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
+import { db } from "../infrastructure/firebase.config";
 
 export class DeviceService {
+  async registerDevice(
+    userId: string,
+    device: DeviceModel,
+    key: string
+  ): Promise<boolean> {
+    try {
+      // Paso 1: Verificar si la key existe en deviceKeys y está inactiva
+      const keyRef = doc(db, "deviceKeys", key);
+      const keySnap = await getDoc(keyRef);
+
+      if (!keySnap.exists()) {
+        throw new Error("La key no existe.");
+      }
+
+      const keyData = keySnap.data();
+      if (keyData.active === true) {
+        throw new Error("La key ya está activa.");
+      }
+
+      // Paso 2: Si la key está inactiva, registrar el dispositivo en el usuario
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, {
+        devices: arrayUnion(device),
+      });
+
+      // Paso 3: Actualizar la key a activa en deviceKeys
+      await updateDoc(keyRef, {
+        active: true,
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Error registrando el dispositivo:", error);
+      throw error;
+    }
+  }
   // Simula una petición para obtener un dispositivo por su ID
   async getDeviceById(id: string): Promise<DeviceModel> {
     return new Promise((resolve, reject) => {

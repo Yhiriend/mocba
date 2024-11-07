@@ -53,6 +53,10 @@ onMounted(() => {
   color: rgb(22, 64, 111);
   font-weight: 700;
 }
+.content.name {
+  font-size: x-large;
+  margin-top: 0;
+}
 .content.temp {
   font-size: 2rem;
   margin-top: 20px;
