@@ -57,6 +57,7 @@ import { RoutesEnum } from "../router/routes.enum";
 import { useRouter } from "vue-router";
 import authService from "../services/auth.service";
 import { useAuhtStore } from "../stores/authStore";
+import toastService from "../services/toast.service";
 
 const router = useRouter();
 const isLoading = ref(false);
@@ -67,12 +68,23 @@ const handleSubmit = () => {
   isLoading.value = true;
   authService
     .login(username.value, password.value)
-    .then((user) => {
+    .then(async (user) => {
       if (user) {
-        useAuhtStore().setIsAuth(true);
+        const token = await authService.generateToken(user);
+        console.log("init token", token);
         useAuhtStore().setUser(user);
+        useAuhtStore().setIsAuth(true);
+        useAuhtStore().setToken(token ?? "");
+        localStorage.setItem("token", token ?? "");
         router.push(RoutesEnum.HOME);
       }
+    })
+    .catch(() => {
+      toastService.showToast(
+        "Credenciales inválidas",
+        "Tus credenciales son incorrectas",
+        "error"
+      );
     })
     .finally(() => {
       isLoading.value = false;

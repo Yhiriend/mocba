@@ -9,6 +9,7 @@ import DeviceDetailView from "../views/DeviceDetailView.vue";
 import { getRouteName } from "./navigate.helper";
 import AlertsView from "../views/AlertsView.vue";
 import RegisterView from "../views/RegisterView.vue";
+import { authGuard } from "../guards/guard";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -60,5 +61,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+router.beforeEach(authGuard);
 
 export default router;

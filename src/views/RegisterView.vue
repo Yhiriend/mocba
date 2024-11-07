@@ -12,7 +12,7 @@
           :required="true"
           icon="key"
           id="key"
-          placeholder="Introduce tu llave de acceso"
+          placeholder="Introduce tu llave de registro"
           v-model="key"
           v-if="!keyExist"
         ></InputBasic>
@@ -118,27 +118,35 @@ const handleSubmit = () => {
 const handleButtonClick = () => {};
 const registerNewUser = () => {
   const id = generateId();
-  const userState = demoStore.getUserListState.find((user) => user.id === id);
-  if (userState) {
-    registerNewUser();
-  } else {
-    const user: UserModel = {
-      name: name.value,
-      surname: surname.value,
-      password: password.value,
-      username: username.value,
-      alerts: [],
-      devices: [],
-      id,
-    };
-    authService.register(user).then((user) => {
+  const user: UserModel = {
+    name: name.value,
+    surname: surname.value,
+    password: password.value,
+    username: username.value,
+    alerts: [],
+    devices: [],
+    id,
+  };
+  authService
+    .register(user, key.value)
+    .then(async (user) => {
       if (user) {
+        const token = await authService.generateToken(user);
         useAuhtStore().setUser(user);
         useAuhtStore().setIsAuth(true);
+        useAuhtStore().setToken(token ?? "");
+        localStorage.setItem("token", token ?? "");
         navigateTo(RoutesEnum.HOME, router);
       }
-    });
-  }
+    })
+    .catch(() => {
+      toastService.showToast(
+        "Error de registro",
+        "Hubo un error al intentar registrarte, intentalo más tarde",
+        "error"
+      );
+    })
+    .finally(() => (isLoading.value = false));
 };
 const validateKey = () => {
   authService
@@ -161,6 +169,14 @@ const validateKey = () => {
         );
         buttonText.value = buttonTextStates[0];
       }
+    })
+    .catch(() => {
+      toastService.showToast(
+        "Validación de la llave",
+        "Hubo un error al intentar validar la llave",
+        "error"
+      );
+      buttonText.value = buttonTextStates[0];
     })
     .finally(() => {
       isLoading.value = false;

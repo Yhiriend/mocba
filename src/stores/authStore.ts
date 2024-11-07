@@ -5,9 +5,12 @@ export const useAuhtStore = defineStore("authState", {
   state: () => ({
     user: {} as UserModel,
     isAuthenticated: false,
+    token: "",
   }),
   getters: {
     getUserState: (state) => state.user,
+    getToken: (state) => state.token,
+    getIsAuthenticated: (state) => state.isAuthenticated,
   },
   actions: {
     setIsAuth(auth: boolean) {
@@ -15,6 +18,9 @@ export const useAuhtStore = defineStore("authState", {
     },
     setUser(user: UserModel) {
       this.user = user;
+    },
+    setToken(token: string) {
+      this.token = token;
     },
   },
 });

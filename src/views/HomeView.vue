@@ -2,7 +2,9 @@
   <div class="main-wrapper">
     <div class="back-circle"></div>
     <div class="header-wrapper">
-      <h2 class="username">Hola, {{ auhtStore.getUserState.name }}.</h2>
+      <h2 style="text-transform: capitalize" class="username">
+        Hola, {{ auhtStore.getUserState.name }}.
+      </h2>
     </div>
     <p
       style="
@@ -60,7 +62,10 @@
       >
     </p>
     <div class="alerts-wrapper">
-      <template v-for="(alert, index) in alertList" :key="index">
+      <div v-if="alertList.length <= 0">
+        <p>No hay alertas</p>
+      </div>
+      <template v-else v-for="(alert, index) in alertList" :key="index">
         <div class="alert">
           <p style="color: white">{{ alert.title }}</p>
           <i
