@@ -191,14 +191,14 @@ const validateKey = () => {
   width: 100vw;
 }
 .image-container {
-  width: fit-content; /* Define el tamaño del contenedor */
-  height: fit-content; /* Define el tamaño del contenedor */
+  width: fit-content;
+  height: fit-content;
 }
 
 .responsive-svg {
   width: 400%;
   height: 400%;
-  object-fit: contain; /* Mantiene la relación de aspecto */
+  object-fit: contain;
 }
 .login-container {
   position: absolute;

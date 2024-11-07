@@ -175,15 +175,15 @@ function desvinculateDevice() {
   background: rgb(223, 231, 241);
 }
 .image-container {
-  width: fit-content; /* Define el tamaño del contenedor */
-  height: fit-content; /* Define el tamaño del contenedor */
+  width: fit-content;
+  height: fit-content;
 }
 
 .responsive-svg {
   display: none;
   width: 400%;
   height: 400%;
-  object-fit: contain; /* Mantiene la relación de aspecto */
+  object-fit: contain;
 }
 .form-wrapper {
   max-width: 90%;

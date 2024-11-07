@@ -1,7 +1,5 @@
-// device.service.ts
-
 import { DeviceModel } from "../models/device.model";
-import { DEVICES } from "../models/constants/devices"; // Asegúrate de importar el array de dispositivos
+import { DEVICES } from "../models/constants/devices";
 import { useAuhtStore } from "../stores/authStore";
 import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
 import { db } from "../infrastructure/firebase.config";
@@ -13,7 +11,6 @@ export class DeviceService {
     key: string
   ): Promise<boolean> {
     try {
-      // Paso 1: Verificar si la key existe en deviceKeys y está inactiva
       const keyRef = doc(db, "deviceKeys", key);
       const keySnap = await getDoc(keyRef);
 
@@ -26,13 +23,11 @@ export class DeviceService {
         throw new Error("La key ya está activa.");
       }
 
-      // Paso 2: Si la key está inactiva, registrar el dispositivo en el usuario
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
         devices: arrayUnion(device),
       });
 
-      // Paso 3: Actualizar la key a activa en deviceKeys
       await updateDoc(keyRef, {
         active: true,
       });
@@ -43,7 +38,6 @@ export class DeviceService {
       throw error;
     }
   }
-  // Simula una petición para obtener un dispositivo por su ID
   async getDeviceById(id: string): Promise<DeviceModel> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -55,16 +49,15 @@ export class DeviceService {
         } else {
           reject(new Error("Dispositivo no encontrado"));
         }
-      }, 1000); // Simula un retraso de 1 segundo
+      }, 1000);
     });
   }
 
-  // Simula una petición para obtener todos los dispositivos
   async getAllMyDevices() {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(DEVICES);
-      }, 1000); // Simula un retraso de 1 segundo
+      }, 1000);
     });
   }
 
@@ -76,11 +69,10 @@ export class DeviceService {
         user.devices = devices;
         useAuhtStore().setUser(user);
         resolve(true);
-      }, 3000); // Simula un retraso de 1 segundo
+      }, 3000);
     });
   }
 }
 
-// Instancia del servicio
 const deviceService = new DeviceService();
 export default deviceService;
