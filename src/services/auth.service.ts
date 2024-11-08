@@ -12,14 +12,14 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../infrastructure/firebase.config";
+import { dbFirestore } from "../infrastructure/firebase.config";
 import { jwtVerify, SignJWT } from "jose";
 import { useAuhtStore } from "../stores/authStore";
 
 const SECRET_KEY = "tu_clave_secreta";
 export class AuthService {
   async validateKey(key: string): Promise<boolean> {
-    const keyDocRef = doc(db, "userKeys", key); // Asume que el ID del documento es la clave
+    const keyDocRef = doc(dbFirestore, "userKeys", key); // Asume que el ID del documento es la clave
 
     try {
       const keyDoc = await getDoc(keyDocRef);
@@ -43,7 +43,7 @@ export class AuthService {
   async login(username: string, password: string): Promise<UserModel> {
     try {
       // Creamos una referencia a la colección de usuarios
-      const usersCollection = collection(db, "users");
+      const usersCollection = collection(dbFirestore, "users");
 
       // Hacemos la consulta para encontrar el usuario por username y password
       const q = query(
@@ -75,9 +75,9 @@ export class AuthService {
 
   async register(user: UserModel, key: string): Promise<UserModel> {
     try {
-      const userRef = doc(db, "users", user.id);
+      const userRef = doc(dbFirestore, "users", user.id);
       await setDoc(userRef, user);
-      const keyRef = doc(db, "userKeys", key);
+      const keyRef = doc(dbFirestore, "userKeys", key);
       await updateDoc(keyRef, { active: true });
       console.log(`El key ${key} ha sido activado.`);
       console.log("Usuario registrado con ID:", user.id);
@@ -91,7 +91,7 @@ export class AuthService {
   async getUserById(id: string): Promise<UserModel> {
     try {
       // Crea una referencia al documento del usuario en la colección 'users'
-      const userRef = doc(db, "users", id);
+      const userRef = doc(dbFirestore, "users", id);
       const userSnapshot = await getDoc(userRef);
 
       // Verifica si el documento existe
@@ -114,7 +114,7 @@ export class AuthService {
     updatedUserData: Partial<UserModel>
   ): Promise<boolean> {
     try {
-      const userRef = doc(db, "users", userId);
+      const userRef = doc(dbFirestore, "users", userId);
 
       // Actualiza solo los campos especificados en updatedUserData
       await updateDoc(userRef, updatedUserData);

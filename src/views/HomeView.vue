@@ -78,18 +78,33 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { navigateTo } from "../router/navigate.helper";
 import { RoutesEnum } from "../router/routes.enum";
 import { useRouter } from "vue-router";
 import CardDevice from "../components/CardDevice.vue";
 import { useAuhtStore } from "../stores/authStore";
+import realtimeDatabaseService from "../services/realtime-database.service";
 
 const router = useRouter();
 const auhtStore = useAuhtStore();
-
+let stopListening: (() => void) | null = null;
 const deviceList = ref(auhtStore.getUserState.devices);
 const alertList = ref(auhtStore.getUserState.alerts);
+
+onMounted(() => {
+  stopListening = realtimeDatabaseService.listenToChanges(
+    `devices/${auhtStore.getUserState.id}`,
+    (data) => {
+      console.log("Datos actualizados:", data);
+    }
+  );
+});
+onUnmounted(() => {
+  if (stopListening) {
+    stopListening();
+  }
+});
 </script>
 <style>
 .main-wrapper {

@@ -2,7 +2,7 @@ import { DeviceModel } from "../models/device.model";
 import { DEVICES } from "../models/constants/devices";
 import { useAuhtStore } from "../stores/authStore";
 import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
-import { db } from "../infrastructure/firebase.config";
+import { dbFirestore } from "../infrastructure/firebase.config";
 
 export class DeviceService {
   async registerDevice(
@@ -11,7 +11,7 @@ export class DeviceService {
     key: string
   ): Promise<boolean> {
     try {
-      const keyRef = doc(db, "deviceKeys", key);
+      const keyRef = doc(dbFirestore, "deviceKeys", key);
       const keySnap = await getDoc(keyRef);
 
       if (!keySnap.exists()) {
@@ -23,7 +23,7 @@ export class DeviceService {
         throw new Error("La key ya está activa.");
       }
 
-      const userRef = doc(db, "users", userId);
+      const userRef = doc(dbFirestore, "users", userId);
       await updateDoc(userRef, {
         devices: arrayUnion(device),
       });
@@ -83,7 +83,7 @@ export class DeviceService {
     updatedDeviceData: Partial<DeviceModel>
   ): Promise<boolean> {
     try {
-      const userRef = doc(db, "users", userId);
+      const userRef = doc(dbFirestore, "users", userId);
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {
