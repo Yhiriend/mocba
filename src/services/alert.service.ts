@@ -16,6 +16,9 @@ export class AlertService {
       showConfirmButton: true,
       showCancelButton: true,
       icon: type,
+      customClass: {
+        confirmButton: "btn-alert-success",
+      },
     }).then(callback);
   }
 }

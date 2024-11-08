@@ -32,6 +32,10 @@ export class DeviceService {
         active: true,
       });
 
+      const userState = useAuhtStore().getUserState;
+      userState.devices = [...userState.devices, { ...device, id: key }];
+      useAuhtStore().setUser(userState);
+
       return true;
     } catch (error) {
       console.error("Error registrando el dispositivo:", error);
@@ -71,6 +75,50 @@ export class DeviceService {
         resolve(true);
       }, 3000);
     });
+  }
+
+  async updateDevice(
+    userId: string,
+    deviceId: string,
+    updatedDeviceData: Partial<DeviceModel>
+  ): Promise<boolean> {
+    try {
+      const userRef = doc(db, "users", userId);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        throw new Error("Usuario no encontrado.");
+      }
+
+      const userData = userSnap.data();
+      const devices = userData.devices || [];
+
+      const deviceIndex = devices.findIndex(
+        (device: DeviceModel) => device.id === deviceId
+      );
+      if (deviceIndex === -1) {
+        throw new Error("Dispositivo no encontrado.");
+      }
+
+      const updatedDevices = [...devices];
+      updatedDevices[deviceIndex] = {
+        ...updatedDevices[deviceIndex],
+        ...updatedDeviceData,
+      };
+
+      await updateDoc(userRef, {
+        devices: updatedDevices,
+      });
+
+      const userState = useAuhtStore().getUserState;
+      userState.devices = updatedDevices;
+      useAuhtStore().setUser(userState);
+
+      return true;
+    } catch (error) {
+      console.error("Error actualizando el dispositivo:", error);
+      throw error;
+    }
   }
 }
 

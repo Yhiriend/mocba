@@ -57,7 +57,11 @@ import deviceService from "../services/device.service";
 import { DeviceModel } from "../models/device.model";
 import { useAuhtStore } from "../stores/authStore";
 import toastService from "../services/toast.service";
+import { navigateTo } from "../router/navigate.helper";
+import { useRouter } from "vue-router";
+import { RoutesEnum } from "../router/routes.enum";
 
+const router = useRouter();
 const isLoading = ref(false);
 const key = ref("");
 const name = ref("");
@@ -71,7 +75,8 @@ const handleSubmit = async () => {
     name: name.value,
     charge: 100,
     temperature: 25,
-    criticLevel: Number(alert.value),
+    criticChargeLevel: Number(alert.value),
+    criticTemperatureLevel: 25,
     isActive: true,
     showAtHome: false,
   };
@@ -83,6 +88,7 @@ const handleSubmit = async () => {
       "Has agregado un nuevo dispositivo",
       "success"
     );
+    navigateTo(RoutesEnum.DEVICES, router);
   } catch (error) {
     console.error(error);
     toastService.showToast(

@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../infrastructure/firebase.config";
 import { jwtVerify, SignJWT } from "jose";
+import { useAuhtStore } from "../stores/authStore";
 
 const SECRET_KEY = "tu_clave_secreta";
 export class AuthService {
@@ -105,6 +106,26 @@ export class AuthService {
     } catch (error) {
       console.error("Error obteniendo el usuario:", error);
       return Promise.reject(error);
+    }
+  }
+
+  async updateUser(
+    userId: string,
+    updatedUserData: Partial<UserModel>
+  ): Promise<boolean> {
+    try {
+      const userRef = doc(db, "users", userId);
+
+      // Actualiza solo los campos especificados en updatedUserData
+      await updateDoc(userRef, updatedUserData);
+      const userState = useAuhtStore().getUserState;
+      const userUpdate = { ...userState, updatedUserData };
+      useAuhtStore().setUser(userUpdate);
+      console.log(`Usuario con ID ${userId} ha sido actualizado.`);
+      return true;
+    } catch (error) {
+      console.error("Error actualizando el usuario:", error);
+      throw error;
     }
   }
 

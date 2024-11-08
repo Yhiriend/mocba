@@ -6,26 +6,16 @@
         ><span style="font-size: 2rem; line-height: 2rem">Configuración</span>
       </h1>
       <form @submit.prevent="handleSubmit">
-        <div class="field-container">
-          <label for="username"><i class="bi bi-person"></i></label>
-          <input
-            type="text"
-            id="username"
-            v-model="username"
-            placeholder="Ingresa un nombre de usuario"
-            required
-          />
-        </div>
-        <div class="field-container">
-          <label for="password"><i class="bi bi-shield-lock"></i></label>
-          <input
-            type="text"
-            id="password"
-            v-model="password"
-            placeholder="Cambia tu contraseña (opcional)"
-            required
-          />
-        </div>
+        <p
+          style="
+            text-align: start;
+            padding-left: 50px;
+            line-height: 1rem;
+            margin-bottom: 10px;
+          "
+        >
+          Primer nombre:
+        </p>
         <div class="field-container">
           <label for="name"><i class="bi bi-alphabet-uppercase"></i></label>
           <input
@@ -36,6 +26,16 @@
             required
           />
         </div>
+        <p
+          style="
+            text-align: start;
+            padding-left: 50px;
+            line-height: 1rem;
+            margin-bottom: 10px;
+          "
+        >
+          Segundo nombre:
+        </p>
         <div class="field-container">
           <label for="surname"><i class="bi bi-alphabet-uppercase"></i></label>
           <input
@@ -46,7 +46,45 @@
             required
           />
         </div>
-
+        <p
+          style="
+            text-align: start;
+            padding-left: 50px;
+            line-height: 1rem;
+            margin-bottom: 10px;
+          "
+        >
+          Nombre de usuario:
+        </p>
+        <div class="field-container">
+          <label for="username"><i class="bi bi-person"></i></label>
+          <input
+            type="text"
+            id="username"
+            v-model="username"
+            placeholder="Ingresa un nombre de usuario"
+            required
+          />
+        </div>
+        <p
+          style="
+            text-align: start;
+            padding-left: 50px;
+            line-height: 1rem;
+            margin-bottom: 10px;
+          "
+        >
+          Contraseña:
+        </p>
+        <div class="field-container">
+          <label for="password"><i class="bi bi-shield-lock"></i></label>
+          <input
+            type="text"
+            id="password"
+            v-model="password"
+            placeholder="Cambia tu contraseña (opcional)"
+          />
+        </div>
         <ButtonBasic
           buttonType="submit"
           buttonText="Guardar cambios"
@@ -62,6 +100,9 @@ import { onMounted, ref } from "vue";
 import ButtonBasic from "../components/ButtonBasic.vue";
 import { useAuhtStore } from "../stores/authStore";
 import { useRouter } from "vue-router";
+import authService from "../services/auth.service";
+import { UserModel } from "../models/user.model";
+import toastService from "../services/toast.service";
 
 const router = useRouter();
 const auhtStore = useAuhtStore();
@@ -73,7 +114,32 @@ const surname = ref("");
 const userData = auhtStore.getUserState;
 
 const handleButtonClick = () => {};
-const handleSubmit = () => {};
+const handleSubmit = async () => {
+  isLoading.value = true;
+  const user: UserModel = {
+    ...userData,
+    username: username.value,
+    name: name.value,
+    surname: surname.value,
+  };
+  try {
+    await authService.updateUser(userData.id, user);
+    toastService.showToast(
+      "Actualización exitosa!",
+      "Tus datos personales han sido actualizados",
+      "success"
+    );
+  } catch (error) {
+    console.error(error);
+    toastService.showToast(
+      "Error de actualización",
+      "Los cambios no se guardaron correctamente",
+      "error"
+    );
+  } finally {
+    isLoading.value = false;
+  }
+};
 onMounted(() => {
   username.value = userData.username;
   name.value = userData.name;
@@ -91,8 +157,10 @@ onMounted(() => {
   position: absolute;
   max-width: 90%;
   width: 90%;
+  height: 100%;
   margin: auto;
   padding: 20px;
+  overflow-y: auto;
 }
 
 h1 {
@@ -107,6 +175,11 @@ form {
   display: flex;
   flex-direction: column;
 }
+
+form p {
+  margin-top: 0;
+}
+
 .field-container {
   display: flex;
   align-items: center;
@@ -142,6 +215,7 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  margin: 50px 0;
 }
 
 button:hover {

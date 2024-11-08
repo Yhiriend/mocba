@@ -39,7 +39,7 @@ onMounted(() => {
 </script>
 <style scoped>
 .card {
-  height: 200px;
+  height: 210px;
   width: 150px;
   min-width: 150px;
   background: white;
@@ -54,12 +54,13 @@ onMounted(() => {
   font-weight: 700;
 }
 .content.name {
-  font-size: x-large;
-  margin-top: 0;
+  font-size: larger;
+  margin-top: 10px;
+  line-height: 1.4rem;
 }
 .content.temp {
-  font-size: 2rem;
-  margin-top: 20px;
+  font-size: 1.5rem;
+  margin-top: 25px;
   margin-bottom: 25px;
   line-height: 0rem;
 }

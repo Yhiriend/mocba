@@ -3,7 +3,8 @@ export interface DeviceModel {
   temperature: number;
   name: string;
   id: string;
-  criticLevel: number;
+  criticTemperatureLevel: number;
+  criticChargeLevel: number;
   isActive: boolean;
   showAtHome: boolean;
 }

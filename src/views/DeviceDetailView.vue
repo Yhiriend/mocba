@@ -59,7 +59,7 @@
           icon="lightning-charge-fill"
           id="chargelimit"
           placeholder="Ingresa el límite en %"
-          v-model="deviceCriticLevel"
+          v-model="deviceCriticChargeLevel"
           :isLoadingData="isLoadingDeviceData"
         ></InputBasic>
         <p
@@ -70,7 +70,7 @@
             margin-bottom: 10px;
           "
         >
-          Alertar de temperatura en (%):
+          Alerta de temperatura en (%):
         </p>
         <InputBasic
           type="number"
@@ -81,6 +81,7 @@
           v-model="deviceCriticTempLevel"
           :isLoadingData="isLoadingDeviceData"
         ></InputBasic>
+
         <ButtonBasic
           class="button-submit"
           buttonText="Desvincular dispositivo"
@@ -113,6 +114,8 @@ import LoaderSpinner from "../components/LoaderSpinner.vue";
 import InputBasic from "../components/InputBasic.vue";
 import { navigateBefore } from "../router/navigate.helper";
 import alertService from "../services/alert.service";
+import { useAuhtStore } from "../stores/authStore";
+import toastService from "../services/toast.service";
 
 const router = useRouter();
 const route = useRoute();
@@ -120,13 +123,13 @@ const isLoading = ref(false);
 const isLoadingDeviceData = ref(false);
 const deviceData = ref<DeviceModel>();
 const deviceName = ref("");
-const deviceCriticLevel = ref(0);
+const deviceCriticChargeLevel = ref(0);
 const deviceCriticTempLevel = ref(0);
 
 const desvinculateOnClick = () => {
   alertService.showAlert(
     "Desvincular",
-    "No seguirás recibiendo notificaciones de alerta de este dispositivo.",
+    "No volverás a ver el estado ni seguirás recibiendo notificaciones de alerta de este dispositivo.",
     "warning",
     (result: any) => {
       if (result.isConfirmed) {
@@ -141,7 +144,25 @@ const desvinculateOnClick = () => {
   );
 };
 const handleButtonClick = () => {};
-const handleSubmit = () => {};
+const handleSubmit = async () => {
+  const device: DeviceModel = {
+    ...deviceData.value!,
+    name: deviceName.value,
+    criticChargeLevel: deviceCriticChargeLevel.value,
+    criticTemperatureLevel: deviceCriticTempLevel.value,
+  };
+  const userId = useAuhtStore().getUserState.id;
+  try {
+    await deviceService.updateDevice(userId, device.id, device);
+    toastService.showToast(
+      "Actualización exitosa!",
+      "Tu dispositivo ha sido actualizado",
+      "success"
+    );
+  } catch (error) {
+    console.error(error);
+  }
+};
 const getDeviceData = async () => {
   const deviceId = route.params.id as string;
   deviceService
@@ -150,7 +171,8 @@ const getDeviceData = async () => {
       if (device) {
         deviceData.value = device;
         deviceName.value = device.name;
-        deviceCriticLevel.value = device.criticLevel;
+        deviceCriticChargeLevel.value = device.criticChargeLevel;
+        deviceCriticTempLevel.value = device.criticTemperatureLevel;
       }
     })
     .finally(() => {
@@ -161,10 +183,6 @@ onMounted(() => {
   isLoadingDeviceData.value = true;
   getDeviceData();
 });
-
-function desvinculateDevice() {
-  throw new Error("Function not implemented.");
-}
 </script>
 <style scoped>
 .wrapper {
