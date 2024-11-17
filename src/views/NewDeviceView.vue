@@ -29,14 +29,26 @@
           />
         </div>
         <div class="field-container">
-          <label for="alert"
-            ><i style="font-size: 1.5rem" class="bi bi-percent"></i
+          <label for="charge"
+            ><i class="bi bi-lightning-charge-fill"></i
           ></label>
           <input
             type="number"
-            id="alert"
-            v-model="alert"
-            placeholder="Establece un límite % (alerta opcional)"
+            id="charge"
+            v-model="charge"
+            placeholder="Nivel de carga (%)"
+            required
+          />
+        </div>
+        <div class="field-container">
+          <label for="temperature"
+            ><i class="bi bi-thermometer-half"></i
+          ></label>
+          <input
+            type="number"
+            id="temperature"
+            v-model="temperature"
+            placeholder="Límite de temperatura % (opcional)"
             required
           />
         </div>
@@ -48,6 +60,14 @@
         ></ButtonBasic>
       </form>
     </div>
+    <div
+      style="
+        height: 100px;
+        width: 100%;
+        background: rgb(223, 231, 241);
+        margin-top: 0;
+      "
+    ></div>
   </div>
 </template>
 <script setup lang="ts">
@@ -55,7 +75,6 @@ import { ref } from "vue";
 import ButtonBasic from "../components/ButtonBasic.vue";
 import deviceService from "../services/device.service";
 import { DeviceModel } from "../models/device.model";
-import { useAuhtStore } from "../stores/authStore";
 import toastService from "../services/toast.service";
 import { navigateTo } from "../router/navigate.helper";
 import { useRouter } from "vue-router";
@@ -65,7 +84,8 @@ const router = useRouter();
 const isLoading = ref(false);
 const key = ref("");
 const name = ref("");
-const alert = ref("");
+const charge = ref("");
+const temperature = ref("");
 
 const handleButtonClick = () => {};
 const handleSubmit = async () => {
@@ -75,14 +95,13 @@ const handleSubmit = async () => {
     name: name.value,
     charge: 100,
     temperature: 25,
-    criticChargeLevel: Number(alert.value),
-    criticTemperatureLevel: 25,
+    criticChargeLevel: Number(temperature.value) ?? 0,
+    criticTemperatureLevel: Number(charge.value) ?? 40,
     isActive: true,
     showAtHome: false,
   };
-  const userId = useAuhtStore().getUserState.id;
   try {
-    await deviceService.registerDevice(userId, device, key.value);
+    await deviceService.registerDevice(device, key.value);
     toastService.showToast(
       "Registro exitoso!",
       "Has agregado un nuevo dispositivo",
@@ -103,7 +122,6 @@ const handleSubmit = async () => {
 </script>
 <style scoped>
 .wrapper {
-  overflow: hidden;
   height: 100%;
   width: 100%;
   background: rgb(223, 231, 241);
@@ -119,11 +137,13 @@ const handleSubmit = async () => {
   object-fit: contain;
 }
 .form-wrapper {
-  position: absolute;
+  background: rgb(223, 231, 241);
+  position: relative;
   max-width: 90%;
   width: 90%;
-  margin: auto;
+  margin: 0;
   padding: 20px;
+  overflow-y: auto;
 }
 
 h1 {

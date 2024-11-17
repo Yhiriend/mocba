@@ -1,8 +1,5 @@
-import { UserModel } from "../models/user.model";
-import { KEYS } from "../models/constants/keys";
-import { useDemoStore } from "../stores/demoStore";
+import { UserModel, UserRolEnum } from "../models/user.model";
 import {
-  addDoc,
   collection,
   doc,
   getDoc,
@@ -14,12 +11,12 @@ import {
 } from "firebase/firestore";
 import { dbFirestore } from "../infrastructure/firebase.config";
 import { jwtVerify, SignJWT } from "jose";
-import { useAuhtStore } from "../stores/authStore";
+import { useAuhtStore } from "../stores/auth.store";
 
 const SECRET_KEY = "tu_clave_secreta";
 export class AuthService {
-  async validateKey(key: string): Promise<boolean> {
-    const keyDocRef = doc(dbFirestore, "userKeys", key); // Asume que el ID del documento es la clave
+  async validateKey(key: string): Promise<UserRolEnum | null> {
+    const keyDocRef = doc(dbFirestore, "userKeys", key);
 
     try {
       const keyDoc = await getDoc(keyDocRef);
@@ -27,7 +24,7 @@ export class AuthService {
       if (keyDoc.exists()) {
         const data = keyDoc.data();
         if (data.active === false) {
-          return true; // Resuelve la promesa si active es false
+          return data.type;
         } else {
           throw new Error("Key is already active");
         }
@@ -42,34 +39,27 @@ export class AuthService {
 
   async login(username: string, password: string): Promise<UserModel> {
     try {
-      // Creamos una referencia a la colección de usuarios
       const usersCollection = collection(dbFirestore, "users");
-
-      // Hacemos la consulta para encontrar el usuario por username y password
       const q = query(
         usersCollection,
         where("username", "==", username),
         where("password", "==", password)
       );
 
-      // Obtenemos los documentos de la consulta
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        // Si no se encuentra el usuario, lanzamos un error
         throw new Error("Usuario no encontrado");
       }
 
-      // Si encontramos al usuario, lo retornamos
-      const userDoc = querySnapshot.docs[0]; // Suponemos que solo hay un usuario con el mismo username
+      const userDoc = querySnapshot.docs[0];
       const user = userDoc.data() as UserModel;
 
-      // Podemos devolver el usuario
       console.log(user);
       return user;
     } catch (error) {
       console.error("Error al iniciar sesión: ", error);
-      throw error; // Rechazamos la promesa si ocurre un error
+      throw error;
     }
   }
 
@@ -90,17 +80,13 @@ export class AuthService {
 
   async getUserById(id: string): Promise<UserModel> {
     try {
-      // Crea una referencia al documento del usuario en la colección 'users'
       const userRef = doc(dbFirestore, "users", id);
       const userSnapshot = await getDoc(userRef);
 
-      // Verifica si el documento existe
       if (userSnapshot.exists()) {
-        // Devuelve los datos del usuario como un objeto UserModel
         const userData = userSnapshot.data() as UserModel;
         return userData;
       } else {
-        // Rechaza la promesa si el usuario no existe
         throw new Error("Usuario no encontrado");
       }
     } catch (error) {
@@ -116,7 +102,6 @@ export class AuthService {
     try {
       const userRef = doc(dbFirestore, "users", userId);
 
-      // Actualiza solo los campos especificados en updatedUserData
       await updateDoc(userRef, updatedUserData);
       const userState = useAuhtStore().getUserState;
       const userUpdate = { ...userState, updatedUserData };
@@ -131,16 +116,14 @@ export class AuthService {
 
   async generateToken(payload: Record<string, any>): Promise<string> {
     try {
-      // Crear un nuevo token con la clave privada
       const encoder = new TextEncoder();
-      const secretKey = encoder.encode(SECRET_KEY); // Usa tu clave secreta
+      const secretKey = encoder.encode(SECRET_KEY);
 
-      // Crea el JWT
       const jwt = await new SignJWT(payload)
-        .setProtectedHeader({ alg: "HS256", typ: "JWT" }) // Aquí se establece el encabezado protegido
-        .setIssuedAt() // Fecha de emisión
-        .setExpirationTime("2h") // Tiempo de expiración, por ejemplo 2 horas
-        .sign(secretKey); // Firma el JWT con la clave secreta
+        .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+        .setIssuedAt()
+        .setExpirationTime("2h")
+        .sign(secretKey);
 
       return jwt;
     } catch (error) {

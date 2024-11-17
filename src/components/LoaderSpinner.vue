@@ -2,9 +2,7 @@
   <span v-if="isLoading" class="loader"></span>
 </template>
 <script setup lang="ts">
-import { defineProps } from "vue";
-
-const props = defineProps({
+defineProps({
   isLoading: {
     type: Boolean,
     default: false,

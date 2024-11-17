@@ -39,7 +39,11 @@
           :params="{ key: 'id', value: device.id }"
         ></CardDevice>
       </template>
-      <div class="card-add" @click="navigateTo(RoutesEnum.ADD_DEVICE, router)">
+      <div
+        v-if="auhtStore.getUserState.role === UserRolEnum.ADMIN"
+        class="card-add"
+        @click="navigateTo(RoutesEnum.ADD_DEVICE, router)"
+      >
         <i style="font-size: 3.5rem" class="bi bi-plus-lg"></i>
       </div>
     </div>
@@ -78,28 +82,70 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { navigateTo } from "../router/navigate.helper";
 import { RoutesEnum } from "../router/routes.enum";
 import { useRouter } from "vue-router";
 import CardDevice from "../components/CardDevice.vue";
-import { useAuhtStore } from "../stores/authStore";
+import { useAuhtStore } from "../stores/auth.store";
 import realtimeDatabaseService from "../services/realtime-database.service";
+import { useDeviceStore } from "../stores/device.store";
+import deviceService from "../services/device.service";
+import toastService from "../services/toast.service";
+import { UserRolEnum } from "../models/user.model";
 
 const router = useRouter();
 const auhtStore = useAuhtStore();
+const deviceStore = useDeviceStore();
 let stopListening: (() => void) | null = null;
-const deviceList = ref(auhtStore.getUserState.devices);
-const alertList = ref(auhtStore.getUserState.alerts);
+const alertList = ref<any[]>([]);
+
+const deviceList = computed(() => {
+  return deviceStore.getDevices;
+});
+
+const fetchDevices = () => {
+  deviceService
+    .getAllDevices()
+    .then((devices) => {
+      if (devices.length) {
+        deviceStore.setDevices(devices);
+      }
+    })
+    .catch(() => {
+      toastService.showToast(
+        "Error de carga",
+        "No se han podido cargar los dispositivos",
+        "error"
+      );
+    });
+};
 
 onMounted(() => {
+  if (!deviceStore.getDevices.length) {
+    deviceStore.setDevices([]);
+    fetchDevices();
+  }
   stopListening = realtimeDatabaseService.listenToChanges(
-    `devices/${auhtStore.getUserState.id}`,
-    (data) => {
+    "devices",
+    (data: any | null) => {
+      if (!data) return;
       console.log("Datos actualizados:", data);
+
+      Object.keys(data).forEach((deviceId) => {
+        const deviceRealtimeData = data[deviceId];
+        if (deviceRealtimeData) {
+          deviceStore.updateDevice({
+            id: deviceId,
+            charge: deviceRealtimeData.charge,
+            temperature: deviceRealtimeData.temperature,
+          });
+        }
+      });
     }
   );
 });
+
 onUnmounted(() => {
   if (stopListening) {
     stopListening();

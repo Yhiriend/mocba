@@ -45,7 +45,7 @@ import { navigateBefore } from "../router/navigate.helper";
 import { navigateTo } from "../router/navigate.helper";
 import { RoutesEnum } from "../router/routes.enum";
 import { ref } from "vue";
-import { useAuhtStore } from "../stores/authStore";
+import { useAuhtStore } from "../stores/auth.store";
 
 const router = useRouter();
 const auhtStore = useAuhtStore();

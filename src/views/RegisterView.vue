@@ -81,12 +81,10 @@ import { RoutesEnum } from "../router/routes.enum";
 import { useRouter } from "vue-router";
 import authService from "../services/auth.service";
 import toastService from "../services/toast.service";
-import { useDemoStore } from "../stores/demoStore";
-import { UserModel } from "../models/user.model";
+import { UserModel, UserRolEnum } from "../models/user.model";
 import { generateId } from "../models/id-generator";
-import { useAuhtStore } from "../stores/authStore";
+import { useAuhtStore } from "../stores/auth.store";
 
-const demoStore = useDemoStore();
 const buttonTextStates = [
   "Verificar llave",
   "Verificando",
@@ -98,6 +96,7 @@ const buttonText = ref(buttonTextStates[0]);
 const isLoading = ref(false);
 const key = ref("");
 const keyExist = ref(false);
+const userRol = ref<UserRolEnum | undefined>(undefined);
 
 const name = ref("");
 const surname = ref("");
@@ -123,8 +122,7 @@ const registerNewUser = () => {
     surname: surname.value,
     password: password.value,
     username: username.value,
-    alerts: [],
-    devices: [],
+    role: userRol.value,
     id,
   };
   authService
@@ -151,14 +149,14 @@ const registerNewUser = () => {
 const validateKey = () => {
   authService
     .validateKey(key.value)
-    .then((exist) => {
-      if (exist) {
+    .then((type) => {
+      if (type === UserRolEnum.ADMIN || type === UserRolEnum.OBSERVER) {
         toastService.showToast(
           "Validación de la llave",
           "Tu llave fue validada con éxito!",
           "success"
         );
-
+        userRol.value = type;
         buttonText.value = buttonTextStates[2];
         keyExist.value = true;
       } else {

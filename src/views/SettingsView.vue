@@ -86,10 +86,18 @@
           />
         </div>
         <ButtonBasic
+          style="margin-top: 20px"
           buttonType="submit"
           buttonText="Guardar cambios"
           :isLoading="isLoading"
           @click="handleButtonClick"
+        ></ButtonBasic>
+        <ButtonBasic
+          style="margin-top: 15px; margin-bottom: 50px"
+          buttonText="Cerrar sesión"
+          buttonStyle="danger"
+          :isLoading="isLoading"
+          @click="handleCloseSessionClick"
         ></ButtonBasic>
       </form>
     </div>
@@ -98,11 +106,13 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import ButtonBasic from "../components/ButtonBasic.vue";
-import { useAuhtStore } from "../stores/authStore";
+import { useAuhtStore } from "../stores/auth.store";
 import { useRouter } from "vue-router";
 import authService from "../services/auth.service";
 import { UserModel } from "../models/user.model";
 import toastService from "../services/toast.service";
+import { navigateTo } from "../router/navigate.helper";
+import { RoutesEnum } from "../router/routes.enum";
 
 const router = useRouter();
 const auhtStore = useAuhtStore();
@@ -139,6 +149,11 @@ const handleSubmit = async () => {
   } finally {
     isLoading.value = false;
   }
+};
+
+const handleCloseSessionClick = () => {
+  localStorage.clear();
+  navigateTo(RoutesEnum.LOGIN, router);
 };
 onMounted(() => {
   username.value = userData.username;
@@ -215,7 +230,6 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin: 50px 0;
 }
 
 button:hover {

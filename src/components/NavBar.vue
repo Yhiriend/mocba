@@ -1,4 +1,3 @@
-import { RoutesEnum } from '../router/routes.enum';
 <template>
   <nav>
     <button
@@ -9,6 +8,7 @@ import { RoutesEnum } from '../router/routes.enum';
       <i id="home" class="bi bi-house-fill"></i>
     </button>
     <button
+      v-if="useAuhtStore().getUserState.role === UserRolEnum.ADMIN"
       class="icon"
       :class="{ active: route.path === RoutesEnum.ADD_DEVICE }"
       @click="goTo(RoutesEnum.ADD_DEVICE)"
@@ -36,6 +36,8 @@ import { RoutesEnum } from '../router/routes.enum';
 import { RoutesEnum } from "../router/routes.enum";
 import { navigateTo } from "../router/navigate.helper";
 import { useRoute, useRouter } from "vue-router";
+import { useAuhtStore } from "../stores/auth.store";
+import { UserRolEnum } from "../models/user.model";
 const router = useRouter();
 const route = useRoute();
 const goTo = (routePath: RoutesEnum) => {

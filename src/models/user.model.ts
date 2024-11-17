@@ -1,12 +1,12 @@
-import { AlertModel } from "./alert.model";
-import { DeviceModel } from "./device.model";
-
+export enum UserRolEnum {
+  ADMIN = "ADMIN",
+  OBSERVER = "OBSERVER",
+}
 export interface UserModel {
   id: string;
   name: string;
   surname: string;
-  alerts: AlertModel[];
-  devices: DeviceModel[];
   username: string;
   password: string;
+  role?: UserRolEnum;
 }

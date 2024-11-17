@@ -3,6 +3,7 @@
   <div v-else class="field-container">
     <label :for="id"><i :class="'bi bi-' + icon"></i></label>
     <input
+      :readonly="readonly"
       :type="type"
       :id="id"
       v-model="model"
@@ -12,15 +13,19 @@
   </div>
 </template>
 <script setup lang="ts">
-import { defineProps, defineModel } from "vue";
+import { defineModel } from "vue";
 const model = defineModel();
-const props = defineProps({
+defineProps({
   isLoadingData: Boolean,
   id: String,
   type: String,
   placeholder: String,
   required: Boolean,
   icon: String,
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
 });
 </script>
 <style scoped>

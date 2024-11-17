@@ -4,13 +4,9 @@ import NavBar from "./components/NavBar.vue";
 import { useRoute } from "vue-router";
 import { getRouteName } from "./router/navigate.helper";
 import { RoutesEnum } from "./router/routes.enum";
-import { useAuhtStore } from "./stores/authStore";
-import { useAppStore } from "./stores/appStore";
-import { useDemoStore } from "./stores/demoStore";
+import { useDemoStore } from "./stores/demo.store";
 import { USERS } from "./models/constants/demo";
 
-const appStore = useAppStore();
-const authStore = useAuhtStore();
 const demoStore = useDemoStore();
 const route = useRoute();
 

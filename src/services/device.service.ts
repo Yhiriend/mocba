@@ -1,15 +1,17 @@
 import { DeviceModel } from "../models/device.model";
-import { DEVICES } from "../models/constants/devices";
-import { useAuhtStore } from "../stores/authStore";
-import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  getDoc,
+  setDoc,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 import { dbFirestore } from "../infrastructure/firebase.config";
+import { useDeviceStore } from "../stores/device.store";
 
 export class DeviceService {
-  async registerDevice(
-    userId: string,
-    device: DeviceModel,
-    key: string
-  ): Promise<boolean> {
+  async registerDevice(device: DeviceModel, key: string): Promise<boolean> {
     try {
       const keyRef = doc(dbFirestore, "deviceKeys", key);
       const keySnap = await getDoc(keyRef);
@@ -23,18 +25,14 @@ export class DeviceService {
         throw new Error("La key ya está activa.");
       }
 
-      const userRef = doc(dbFirestore, "users", userId);
-      await updateDoc(userRef, {
-        devices: arrayUnion(device),
-      });
+      const deviceRef = doc(dbFirestore, "devices", device.id);
+      await setDoc(deviceRef, device);
 
       await updateDoc(keyRef, {
         active: true,
       });
 
-      const userState = useAuhtStore().getUserState;
-      userState.devices = [...userState.devices, { ...device, id: key }];
-      useAuhtStore().setUser(userState);
+      useDeviceStore().addDevice(device);
 
       return true;
     } catch (error) {
@@ -45,7 +43,7 @@ export class DeviceService {
   async getDeviceById(id: string): Promise<DeviceModel> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const device = useAuhtStore().getUserState.devices.find(
+        const device = useDeviceStore().getDevices.find(
           (device) => device.id === id
         );
         if (device) {
@@ -57,62 +55,46 @@ export class DeviceService {
     });
   }
 
-  async getAllMyDevices() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(DEVICES);
-      }, 1000);
-    });
+  async getAllDevices() {
+    try {
+      const devicesRef = collection(dbFirestore, "devices");
+      const querySnapshot = await getDocs(devicesRef);
+
+      const devices: any[] = [];
+      querySnapshot.forEach((doc) => {
+        devices.push({ id: doc.id, ...doc.data() });
+      });
+
+      console.log("Dispositivos obtenidos:", devices);
+      return devices;
+    } catch (error) {
+      console.error("Error obteniendo dispositivos:", error);
+      return [];
+    }
   }
 
   async desvinculateDevice(id: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const user = useAuhtStore().getUserState;
-        const devices = user.devices.filter((device) => device.id !== id);
-        user.devices = devices;
-        useAuhtStore().setUser(user);
-        resolve(true);
-      }, 3000);
-    });
+    try {
+      const deviceRef = doc(dbFirestore, "devices", id);
+      await updateDoc(deviceRef, { isActive: false });
+      console.log(`El dispositivo con ID ${id} ha sido desvinculado.`);
+      return true;
+    } catch (error) {
+      console.error("Error desvinculando el dispositivo:", error);
+      return false;
+    }
   }
 
   async updateDevice(
-    userId: string,
     deviceId: string,
     updatedDeviceData: Partial<DeviceModel>
   ): Promise<boolean> {
     try {
-      const userRef = doc(dbFirestore, "users", userId);
-      const userSnap = await getDoc(userRef);
+      const deviceRef = doc(dbFirestore, "devices", deviceId);
 
-      if (!userSnap.exists()) {
-        throw new Error("Usuario no encontrado.");
-      }
+      await updateDoc(deviceRef, updatedDeviceData);
 
-      const userData = userSnap.data();
-      const devices = userData.devices || [];
-
-      const deviceIndex = devices.findIndex(
-        (device: DeviceModel) => device.id === deviceId
-      );
-      if (deviceIndex === -1) {
-        throw new Error("Dispositivo no encontrado.");
-      }
-
-      const updatedDevices = [...devices];
-      updatedDevices[deviceIndex] = {
-        ...updatedDevices[deviceIndex],
-        ...updatedDeviceData,
-      };
-
-      await updateDoc(userRef, {
-        devices: updatedDevices,
-      });
-
-      const userState = useAuhtStore().getUserState;
-      userState.devices = updatedDevices;
-      useAuhtStore().setUser(userState);
+      useDeviceStore().updateDevice(updatedDeviceData);
 
       return true;
     } catch (error) {

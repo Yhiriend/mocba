@@ -1,6 +1,6 @@
 <template>
   <div class="card">
-    <CircularProgressBar :percentage="cardData?.charge" />
+    <CircularProgressBar :percentage="cardData?.charge ?? 0" />
     <p class="content name">{{ cardData?.name }}</p>
     <p class="content temp">🌡️ {{ cardData?.temperature }}°</p>
     <a
@@ -11,7 +11,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { navigateTo, ParamRoute } from "../router/navigate.helper";
 import { RoutesEnum } from "../router/routes.enum";
 import { useRouter } from "vue-router";
@@ -29,6 +29,9 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+});
+watch(props, (newvalue) => {
+  cardData.value = props.data as ContentDeviceCard;
 });
 onMounted(() => {
   if (props.params && props.data) {

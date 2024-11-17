@@ -1,7 +1,7 @@
 import { getRouteName } from "../router/navigate.helper";
 import { RoutesEnum } from "../router/routes.enum";
 import authService, { AuthService } from "../services/auth.service";
-import { useAuhtStore } from "../stores/authStore";
+import { useAuhtStore } from "../stores/auth.store";
 import { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 
 export const authGuard = async (

@@ -43,12 +43,12 @@ import { ParamRoute } from "../router/navigate.helper";
 import { navigateTo } from "../router/navigate.helper";
 import { RoutesEnum } from "../router/routes.enum";
 import { ref } from "vue";
-import { useAuhtStore } from "../stores/authStore";
 import { DeviceModel } from "../models/device.model";
+import { useDeviceStore } from "../stores/device.store";
 
 const router = useRouter();
-const auhtStore = useAuhtStore();
-const deviceList = ref(auhtStore.getUserState.devices);
+const deviceStore = useDeviceStore();
+const deviceList = ref(deviceStore.getDevices);
 const goToDeviceDetail = (item: DeviceModel) => {
   const params: ParamRoute = {
     key: "id",

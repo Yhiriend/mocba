@@ -3,10 +3,9 @@ import { realtimedb } from "../infrastructure/firebase.config";
 
 class RealtimeDatabaseService {
   /**
-   * Escucha los cambios en una referencia específica de la base de datos en tiempo real.
-   * @param path - La ruta de la referencia en la base de datos (por ejemplo, "users/123").
-   * @param callback - Función que se ejecuta cada vez que los datos cambian.
-   * @returns Una función para detener la escucha de los cambios.
+   * @param path
+   * @param callback
+   * @returns
    */
   listenToChanges<T>(
     path: string,

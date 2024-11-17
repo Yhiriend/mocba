@@ -35,6 +35,7 @@
           Nombre del dispositivo
         </p>
         <InputBasic
+          :readonly="!(useAuhtStore().getUserState.role === UserRolEnum.ADMIN)"
           type="text"
           :required="true"
           icon="device-ssd-fill"
@@ -54,6 +55,7 @@
           Alerta de carga en (%):
         </p>
         <InputBasic
+          :readonly="!(useAuhtStore().getUserState.role === UserRolEnum.ADMIN)"
           type="number"
           :required="true"
           icon="lightning-charge-fill"
@@ -73,6 +75,7 @@
           Alerta de temperatura en (%):
         </p>
         <InputBasic
+          :readonly="!(useAuhtStore().getUserState.role === UserRolEnum.ADMIN)"
           type="number"
           :required="true"
           icon="thermometer-half"
@@ -83,6 +86,7 @@
         ></InputBasic>
 
         <ButtonBasic
+          v-if="useAuhtStore().getUserState.role === UserRolEnum.ADMIN"
           class="button-submit"
           buttonText="Desvincular dispositivo"
           :isLoading="isLoading"
@@ -91,6 +95,7 @@
           @click="desvinculateOnClick"
         ></ButtonBasic>
         <ButtonBasic
+          v-if="useAuhtStore().getUserState.role === UserRolEnum.ADMIN"
           class="button-submit"
           buttonType="submit"
           buttonText="Guardar cambios"
@@ -101,6 +106,14 @@
         ></ButtonBasic>
       </form>
     </div>
+    <div
+      style="
+        height: 100px;
+        width: 100%;
+        background: rgb(223, 231, 241);
+        margin-top: 0;
+      "
+    ></div>
   </div>
 </template>
 <script setup lang="ts">
@@ -114,8 +127,9 @@ import LoaderSpinner from "../components/LoaderSpinner.vue";
 import InputBasic from "../components/InputBasic.vue";
 import { navigateBefore } from "../router/navigate.helper";
 import alertService from "../services/alert.service";
-import { useAuhtStore } from "../stores/authStore";
+import { useAuhtStore } from "../stores/auth.store";
 import toastService from "../services/toast.service";
+import { UserRolEnum } from "../models/user.model";
 
 const router = useRouter();
 const route = useRoute();
@@ -151,9 +165,8 @@ const handleSubmit = async () => {
     criticChargeLevel: deviceCriticChargeLevel.value,
     criticTemperatureLevel: deviceCriticTempLevel.value,
   };
-  const userId = useAuhtStore().getUserState.id;
   try {
-    await deviceService.updateDevice(userId, device.id, device);
+    await deviceService.updateDevice(device.id, device);
     toastService.showToast(
       "Actualización exitosa!",
       "Tu dispositivo ha sido actualizado",

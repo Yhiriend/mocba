@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps } from "vue";
+import { computed } from "vue";
 
 const props = defineProps({
   percentage: {

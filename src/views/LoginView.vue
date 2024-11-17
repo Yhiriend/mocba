@@ -56,7 +56,7 @@ import { navigateTo } from "../router/navigate.helper";
 import { RoutesEnum } from "../router/routes.enum";
 import { useRouter } from "vue-router";
 import authService from "../services/auth.service";
-import { useAuhtStore } from "../stores/authStore";
+import { useAuhtStore } from "../stores/auth.store";
 import toastService from "../services/toast.service";
 
 const router = useRouter();
