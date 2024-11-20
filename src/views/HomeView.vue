@@ -82,7 +82,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { navigateTo } from "../router/navigate.helper";
 import { RoutesEnum } from "../router/routes.enum";
 import { useRouter } from "vue-router";
@@ -93,6 +93,7 @@ import { useDeviceStore } from "../stores/device.store";
 import deviceService from "../services/device.service";
 import toastService from "../services/toast.service";
 import { UserRolEnum } from "../models/user.model";
+import { AlertModel } from "../models/alert.model";
 
 const router = useRouter();
 const auhtStore = useAuhtStore();
@@ -121,6 +122,11 @@ const fetchDevices = () => {
     });
 };
 
+watch(deviceStore, () => {
+  const list = [...deviceStore.getAlerts];
+  alertList.value = list.reverse().slice(0, 4);
+});
+
 onMounted(() => {
   if (!deviceStore.getDevices.length) {
     deviceStore.setDevices([]);
@@ -130,11 +136,43 @@ onMounted(() => {
     "devices",
     (data: any | null) => {
       if (!data) return;
-      console.log("Datos actualizados:", data);
-
       Object.keys(data).forEach((deviceId) => {
         const deviceRealtimeData = data[deviceId];
         if (deviceRealtimeData) {
+          const localDevice = deviceStore.getDevices.find(
+            (d) => d.id === deviceId
+          );
+          if (
+            deviceRealtimeData.charge <= (localDevice?.criticChargeLevel ?? 100)
+          ) {
+            if (localDevice?.name) {
+              const alert: AlertModel = {
+                id: localDevice?.id ?? "10",
+                title: `LB: ${localDevice?.name}`,
+                message: "Nivel bajo de batería",
+                issueDate: new Date().toLocaleDateString(),
+                issueTime: new Date().toLocaleTimeString(),
+              };
+              console.log("creating alert: ", alert);
+              deviceStore.addAlert(alert);
+            }
+          }
+          if (
+            deviceRealtimeData.temperature >=
+            (localDevice?.criticTemperatureLevel ?? 35)
+          ) {
+            if (localDevice?.name) {
+              const alert: AlertModel = {
+                id: localDevice?.id ?? "10",
+                title: `HT: ${localDevice?.name}`,
+                message: "Nivel alto de temperatura",
+                issueDate: new Date().toLocaleDateString(),
+                issueTime: new Date().toLocaleTimeString(),
+              };
+              console.log("creating alert: ", alert);
+              deviceStore.addAlert(alert);
+            }
+          }
           deviceStore.updateDevice({
             id: deviceId,
             charge: deviceRealtimeData.charge,

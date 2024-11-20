@@ -1,10 +1,10 @@
 <template>
   <div class="main-wrapper">
     <h1>Dispositivos</h1>
-    <p style="color: gray; font-style: italic">
+    <!-- <p style="color: gray; font-style: italic">
       Deja marcado los dispositivos que se mostrarán en la pantalla de inicio
       (máximo 3)
-    </p>
+    </p> -->
     <div>
       <p
         style="
@@ -22,7 +22,7 @@
       <div class="devices-wrapper">
         <template v-for="(item, index) in deviceList" :key="index">
           <label for="index" class="device">
-            <input type="checkbox" id="index" />
+            <input type="checkbox" :id="`device-${index}`" />
             <p style="color: white; font-weight: 500; letter-spacing: 0.09rem">
               {{ item.name }}
             </p>
@@ -68,8 +68,9 @@ const goToDeviceDetail = (item: DeviceModel) => {
 .devices-wrapper {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 10px;
-  padding: 5px 10px;
+  padding: 5px 0;
   width: 100%;
   position: relative;
   height: 386px;

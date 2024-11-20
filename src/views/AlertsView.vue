@@ -42,14 +42,12 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { navigateBefore } from "../router/navigate.helper";
-import { navigateTo } from "../router/navigate.helper";
-import { RoutesEnum } from "../router/routes.enum";
-import { ref } from "vue";
-import { useAuhtStore } from "../stores/auth.store";
+import { computed } from "vue";
+import { useDeviceStore } from "../stores/device.store";
 
 const router = useRouter();
-const auhtStore = useAuhtStore();
-const alertList = ref(auhtStore.getUserState.alerts);
+const deviceStore = useDeviceStore();
+const alertList = computed(() => deviceStore.getAlerts);
 </script>
 <style scoped>
 .main-wrapper {

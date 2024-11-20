@@ -113,6 +113,7 @@ import { UserModel } from "../models/user.model";
 import toastService from "../services/toast.service";
 import { navigateTo } from "../router/navigate.helper";
 import { RoutesEnum } from "../router/routes.enum";
+import alertService from "../services/alert.service";
 
 const router = useRouter();
 const auhtStore = useAuhtStore();
@@ -131,6 +132,7 @@ const handleSubmit = async () => {
     username: username.value,
     name: name.value,
     surname: surname.value,
+    password: password.value,
   };
   try {
     await authService.updateUser(userData.id, user);
@@ -152,8 +154,17 @@ const handleSubmit = async () => {
 };
 
 const handleCloseSessionClick = () => {
-  localStorage.clear();
-  navigateTo(RoutesEnum.LOGIN, router);
+  alertService.showAlert(
+    "Cierre de sesión",
+    "Estas seguro de querer cerrar la sesión?",
+    "question",
+    (result) => {
+      if (result.isConfirmed) {
+        localStorage.clear();
+        navigateTo(RoutesEnum.LOGIN, router);
+      }
+    }
+  );
 };
 onMounted(() => {
   username.value = userData.username;

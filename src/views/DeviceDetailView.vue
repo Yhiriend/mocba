@@ -148,7 +148,10 @@ const desvinculateOnClick = () => {
     (result: any) => {
       if (result.isConfirmed) {
         const deviceId = route.params.id as string;
+        isLoading.value = true;
+
         deviceService.desvinculateDevice(deviceId).then(() => {
+          isLoading.value = false;
           navigateBefore(router);
         });
       } else {
@@ -166,6 +169,7 @@ const handleSubmit = async () => {
     criticTemperatureLevel: deviceCriticTempLevel.value,
   };
   try {
+    isLoading.value = true;
     await deviceService.updateDevice(device.id, device);
     toastService.showToast(
       "Actualización exitosa!",
@@ -174,6 +178,8 @@ const handleSubmit = async () => {
     );
   } catch (error) {
     console.error(error);
+  } finally {
+    isLoading.value = false;
   }
 };
 const getDeviceData = async () => {
