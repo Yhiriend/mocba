@@ -76,8 +76,24 @@ export class DeviceService {
   async desvinculateDevice(id: string): Promise<boolean> {
     try {
       const deviceRef = doc(dbFirestore, "devices", id);
+
+      // Obtén el documento del dispositivo para acceder a su clave asociada
+      const deviceSnap = await getDoc(deviceRef);
+
+      if (!deviceSnap.exists()) {
+        throw new Error(`El dispositivo con ID ${id} no existe.`);
+      }
+
+      // Actualiza el estado del dispositivo a inactivo
       await updateDoc(deviceRef, { isActive: false });
-      console.log(`El dispositivo con ID ${id} ha sido desvinculado.`);
+
+      // Actualiza el estado de la deviceKey a inactivo
+      const keyRef = doc(dbFirestore, "deviceKeys", id);
+      await updateDoc(keyRef, { active: false });
+
+      console.log(
+        `El dispositivo con ID ${id} ha sido desvinculado y la clave ${id} desactivada.`
+      );
       return true;
     } catch (error) {
       console.error("Error desvinculando el dispositivo:", error);
