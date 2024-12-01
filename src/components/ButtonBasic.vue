@@ -22,8 +22,9 @@ const props = defineProps({
     required: true,
   },
   buttonType: {
-    type: String,
+    type: String as () => "button" | "submit" | "reset",
     default: "button", // Valor por defecto es 'button'
+    required: true,
   },
   isLoading: {
     type: Boolean,
