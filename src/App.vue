@@ -6,9 +6,13 @@ import { getRouteName } from "./router/navigate.helper";
 import { RoutesEnum } from "./router/routes.enum";
 import { useDemoStore } from "./stores/demo.store";
 import { USERS } from "./models/constants/demo";
+import LoaderSpinner from "./components/LoaderSpinner.vue";
+import { useAppStore } from "./stores/app.store";
 
 const demoStore = useDemoStore();
 const route = useRoute();
+
+const loading = computed(() => useAppStore().isLoading);
 
 const isNavEnable = computed(() => {
   return (
@@ -27,6 +31,7 @@ onMounted(() => {
     <router-view></router-view>
   </main>
   <NavBar v-if="isNavEnable"></NavBar>
+  <LoaderSpinner :is-loading="loading" />
 </template>
 <style>
 main {

@@ -1,8 +1,70 @@
 {
-  "hash": "b664072b",
+  "hash": "5dffb348",
   "configHash": "0ce397d0",
-  "lockfileHash": "e3b0c442",
-  "browserHash": "97a41bd1",
-  "optimized": {},
-  "chunks": {}
+  "lockfileHash": "e6ed0f58",
+  "browserHash": "14302fe4",
+  "optimized": {
+    "vue": {
+      "src": "../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
+      "file": "vue.js",
+      "fileHash": "3e4cac13",
+      "needsInterop": false
+    },
+    "pinia": {
+      "src": "../../node_modules/pinia/dist/pinia.mjs",
+      "file": "pinia.js",
+      "fileHash": "fae3e051",
+      "needsInterop": false
+    },
+    "vue-sweetalert2": {
+      "src": "../../node_modules/vue-sweetalert2/dist/vue-sweetalert.mjs",
+      "file": "vue-sweetalert2.js",
+      "fileHash": "4a0dd402",
+      "needsInterop": false
+    },
+    "vue-router": {
+      "src": "../../node_modules/vue-router/dist/vue-router.mjs",
+      "file": "vue-router.js",
+      "fileHash": "3d4f9941",
+      "needsInterop": false
+    },
+    "firebase/firestore": {
+      "src": "../../node_modules/firebase/firestore/dist/esm/index.esm.js",
+      "file": "firebase_firestore.js",
+      "fileHash": "9432c222",
+      "needsInterop": false
+    },
+    "jose": {
+      "src": "../../node_modules/jose/dist/browser/index.js",
+      "file": "jose.js",
+      "fileHash": "a09b9afc",
+      "needsInterop": false
+    },
+    "firebase/app": {
+      "src": "../../node_modules/firebase/app/dist/esm/index.esm.js",
+      "file": "firebase_app.js",
+      "fileHash": "4fb97b9a",
+      "needsInterop": false
+    },
+    "firebase/database": {
+      "src": "../../node_modules/firebase/database/dist/esm/index.esm.js",
+      "file": "firebase_database.js",
+      "fileHash": "5636d222",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-AYVSL3LM": {
+      "file": "chunk-AYVSL3LM.js"
+    },
+    "chunk-SJGJBLN5": {
+      "file": "chunk-SJGJBLN5.js"
+    },
+    "chunk-NLJK4GHY": {
+      "file": "chunk-NLJK4GHY.js"
+    },
+    "chunk-PZ5AY32C": {
+      "file": "chunk-PZ5AY32C.js"
+    }
+  }
 }

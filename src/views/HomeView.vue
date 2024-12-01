@@ -96,6 +96,7 @@ import deviceService from "../services/device.service";
 import toastService from "../services/toast.service";
 import { UserRolEnum } from "../models/user.model";
 import { AlertModel } from "../models/alert.model";
+import { useAppStore } from "../stores/app.store";
 
 const router = useRouter();
 const auhtStore = useAuhtStore();
@@ -108,6 +109,7 @@ const deviceList = computed(() => {
 });
 
 const fetchDevices = () => {
+  useAppStore().startLoading();
   deviceService
     .getAllDevices()
     .then((devices) => {
@@ -121,7 +123,8 @@ const fetchDevices = () => {
         "No se han podido cargar los dispositivos",
         "error"
       );
-    });
+    })
+    .finally(() => useAppStore().stopLoading());
 };
 
 watch(deviceStore, () => {

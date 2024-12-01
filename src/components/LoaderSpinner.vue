@@ -1,5 +1,7 @@
 <template>
-  <span v-if="isLoading" class="loader"></span>
+  <div v-if="isLoading" class="backlayer">
+    <span class="loader"></span>
+  </div>
 </template>
 <script setup lang="ts">
 defineProps({
@@ -10,13 +12,24 @@ defineProps({
 });
 </script>
 <style scoped>
+.backlayer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
 .loader {
-  border: 3px solid rgb(9, 51, 95); /* Color del borde del loader */
+  border: 3px solid rgb(255, 255, 255); /* Color del borde del loader */
   border-top: 3px solid transparent; /* Color del borde superior */
   border-radius: 50%;
-  width: 15px; /* Ancho del loader */
-  height: 15px; /* Alto del loader */
-  margin-right: 8px; /* Espaciado entre el loader y el texto */
+  width: 30px; /* Ancho del loader */
+  height: 30px; /* Alto del loader */
   animation: spin 1s linear infinite; /* Animación de rotación */
 }
 

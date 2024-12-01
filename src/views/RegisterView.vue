@@ -84,6 +84,7 @@ import toastService from "../services/toast.service";
 import { UserModel, UserRolEnum } from "../models/user.model";
 import { generateId } from "../models/id-generator";
 import { useAuhtStore } from "../stores/auth.store";
+import { useAppStore } from "../stores/app.store";
 
 const buttonTextStates = [
   "Verificar llave",
@@ -105,6 +106,7 @@ const username = ref("");
 
 const handleSubmit = () => {
   isLoading.value = true;
+  useAppStore().startLoading();
   if (buttonText.value === buttonTextStates[0]) {
     buttonText.value = buttonTextStates[1];
     validateKey();
@@ -144,7 +146,10 @@ const registerNewUser = () => {
         "error"
       );
     })
-    .finally(() => (isLoading.value = false));
+    .finally(() => {
+      useAppStore().stopLoading();
+      isLoading.value = false;
+    });
 };
 const validateKey = () => {
   authService
@@ -177,6 +182,7 @@ const validateKey = () => {
       buttonText.value = buttonTextStates[0];
     })
     .finally(() => {
+      useAppStore().stopLoading();
       isLoading.value = false;
     });
 };
