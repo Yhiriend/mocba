@@ -2,7 +2,10 @@
   <div class="card">
     <CircularProgressBar :percentage="cardData?.charge ?? 0" />
     <p class="content name">{{ cardData?.name }}</p>
-    <p class="content temp">🌡️ {{ cardData?.temperature }}°</p>
+    <div class="content wrapper">
+      <p class="content temp">🌡️ {{ cardData?.temperature?.toFixed(2) }}°</p>
+      <p class="content volt">⚡ {{ cardData?.voltage?.toFixed(2) }}v</p>
+    </div>
     <a
       @click="navigateTo(RoutesEnum.DEVICE_DETAIL, router, cardParams)"
       class="content more"
@@ -42,7 +45,7 @@ onMounted(() => {
 </script>
 <style scoped>
 .card {
-  height: 210px;
+  height: fit-content;
   width: 150px;
   min-width: 150px;
   background: white;
@@ -56,16 +59,23 @@ onMounted(() => {
   color: rgb(22, 64, 111);
   font-weight: 700;
 }
+.content.wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .content.name {
   font-size: larger;
   margin-top: 10px;
   line-height: 1.4rem;
 }
-.content.temp {
-  font-size: 1.5rem;
-  margin-top: 25px;
-  margin-bottom: 25px;
-  line-height: 0rem;
+.content.temp,
+.content.volt {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
 }
 .card::after {
   content: "";
@@ -75,7 +85,7 @@ onMounted(() => {
   right: 0;
   width: 0;
   height: 0;
-  border-bottom: 300px solid rgba(231, 231, 231, 0.425);
-  border-left: 300px solid transparent;
+  border-bottom: 400px solid rgba(231, 231, 231, 0.425);
+  border-left: 400px solid transparent;
 }
 </style>

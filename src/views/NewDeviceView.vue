@@ -24,7 +24,7 @@
             type="text"
             id="name"
             v-model="name"
-            placeholder="Nombre (opcional)"
+            placeholder="Nombre del dispositivo"
             required
           />
         </div>
@@ -48,7 +48,7 @@
             type="number"
             id="temperature"
             v-model="temperature"
-            placeholder="Límite de temperatura % (opcional)"
+            placeholder="Límite de temperatura"
             required
           />
         </div>
@@ -95,10 +95,12 @@ const handleSubmit = async () => {
     name: name.value,
     charge: 100,
     temperature: 25,
-    criticChargeLevel: Number(temperature.value) ?? 0,
+    criticChargeLevel: Number(temperature.value) ?? 10,
     criticTemperatureLevel: Number(charge.value) ?? 40,
     isActive: true,
     showAtHome: false,
+    voltage: 0,
+    humidity: 0,
   };
   try {
     await deviceService.registerDevice(device, key.value);

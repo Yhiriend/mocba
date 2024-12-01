@@ -6,7 +6,7 @@
       (máximo 3)
     </p> -->
     <div>
-      <p
+      <!-- <p
         style="
           display: flex;
           justify-content: space-between;
@@ -17,12 +17,12 @@
         "
       >
         <span>Visible</span><span>Dispositivo</span><span>Configurar</span>
-      </p>
+      </p> -->
       <hr />
       <div class="devices-wrapper">
         <template v-for="(item, index) in deviceList" :key="index">
           <label for="index" class="device">
-            <input type="checkbox" :id="`device-${index}`" />
+            <!-- <input type="checkbox" :id="`device-${index}`" /> -->
             <p style="color: white; font-weight: 500; letter-spacing: 0.09rem">
               {{ item.name }}
             </p>

@@ -1,6 +1,8 @@
 export interface DeviceModel {
   charge: number;
   temperature: number;
+  voltage: number;
+  humidity: number;
   name: string;
   id: string;
   criticTemperatureLevel: number;

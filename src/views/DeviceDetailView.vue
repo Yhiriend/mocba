@@ -21,6 +21,10 @@
         <div v-if="!isLoadingDeviceData" class="content temp">
           <p>🌡️ {{ deviceData?.temperature }}°</p>
           <span>temperatura</span>
+          <p>⚡ {{ deviceData?.voltage }}v</p>
+          <span>voltaje</span>
+          <p>💧 {{ deviceData?.humidity }}v</p>
+          <span>humedad</span>
         </div>
       </div>
       <form @submit.prevent="handleSubmit">
@@ -251,7 +255,7 @@ onMounted(() => {
   right: 0;
   width: 0;
   height: 0;
-  border-bottom: 200px solid rgba(231, 231, 231, 0.425);
+  border-bottom: 300px solid rgba(231, 231, 231, 0.425);
   border-left: 500px solid transparent;
 }
 .content.temp {
@@ -267,6 +271,7 @@ onMounted(() => {
 .content.temp p {
   line-height: 1rem;
   margin: 0;
+  font-size: 1.2rem;
 }
 
 .content.temp span {

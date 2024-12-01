@@ -35,6 +35,8 @@
             charge: device.charge,
             name: device.name,
             temperature: device.temperature,
+            voltage: device.voltage,
+            humidity: device.humidity,
           }"
           :params="{ key: 'id', value: device.id }"
         ></CardDevice>
@@ -175,8 +177,10 @@ onMounted(() => {
           }
           deviceStore.updateDevice({
             id: deviceId,
-            charge: deviceRealtimeData.charge,
-            temperature: deviceRealtimeData.temperature,
+            charge: deviceRealtimeData.charge ?? 0,
+            temperature: deviceRealtimeData.temperature ?? 0,
+            voltage: deviceRealtimeData.voltage ?? 0,
+            humidity: deviceRealtimeData.humidity ?? 0,
           });
         }
       });

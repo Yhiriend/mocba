@@ -127,12 +127,13 @@ const userData = auhtStore.getUserState;
 const handleButtonClick = () => {};
 const handleSubmit = async () => {
   isLoading.value = true;
+
   const user: UserModel = {
     ...userData,
     username: username.value,
     name: name.value,
     surname: surname.value,
-    password: password.value,
+    password: password.value === "" ? userData.password : password.value,
   };
   try {
     await authService.updateUser(userData.id, user);
