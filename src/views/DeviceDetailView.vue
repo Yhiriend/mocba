@@ -23,7 +23,7 @@
           <span>temperatura</span>
           <p>⚡ {{ deviceData?.voltage }}v</p>
           <span>voltaje</span>
-          <p>💧 {{ deviceData?.humidity }}v</p>
+          <p>💧 {{ deviceData?.humidity }}</p>
           <span>humedad</span>
         </div>
       </div>
