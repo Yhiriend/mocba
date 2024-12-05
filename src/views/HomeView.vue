@@ -145,7 +145,8 @@ onMounted(() => {
         const deviceRealtimeData = data[deviceId];
         if (deviceRealtimeData) {
           const localDevice = deviceStore.getDevices.find(
-            (d) => d.id === deviceId
+            (d) =>
+              d.id === deviceId && deviceRealtimeData.id !== "arduino_mega_2560"
           );
           if (
             deviceRealtimeData.charge <= (localDevice?.criticChargeLevel ?? 100)
@@ -178,13 +179,15 @@ onMounted(() => {
               deviceStore.addAlert(alert);
             }
           }
-          deviceStore.updateDevice({
-            id: deviceId,
-            charge: deviceRealtimeData.charge ?? 0,
-            temperature: deviceRealtimeData.temperature ?? 0,
-            voltage: deviceRealtimeData.voltage ?? 0,
-            humidity: deviceRealtimeData.humidity ?? 0,
-          });
+          if (deviceId !== "arduino_mega_2560") {
+            deviceStore.updateDevice({
+              id: deviceId,
+              charge: deviceRealtimeData.charge ?? 0,
+              temperature: deviceRealtimeData.temperature ?? 0,
+              voltage: deviceRealtimeData.voltage ?? 0,
+              humidity: deviceRealtimeData.humidity ?? 0,
+            });
+          }
         }
       });
     }

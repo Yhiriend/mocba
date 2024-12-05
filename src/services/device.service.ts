@@ -62,7 +62,9 @@ export class DeviceService {
 
       const devices: any[] = [];
       querySnapshot.forEach((doc) => {
-        doc.data().isActive && devices.push({ id: doc.id, ...doc.data() });
+        doc.data().isActive &&
+          doc.data().id !== "arduino_mega_2560" &&
+          devices.push({ id: doc.id, ...doc.data() });
       });
 
       console.log("Dispositivos obtenidos:", devices);
