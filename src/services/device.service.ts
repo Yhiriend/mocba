@@ -62,7 +62,7 @@ export class DeviceService {
 
       const devices: any[] = [];
       querySnapshot.forEach((doc) => {
-        devices.push({ id: doc.id, ...doc.data() });
+        doc.data().isActive && devices.push({ id: doc.id, ...doc.data() });
       });
 
       console.log("Dispositivos obtenidos:", devices);

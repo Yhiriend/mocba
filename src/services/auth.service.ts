@@ -20,9 +20,10 @@ export class AuthService {
 
     try {
       const keyDoc = await getDoc(keyDocRef);
-
+      console.log(keyDoc);
       if (keyDoc.exists()) {
         const data = keyDoc.data();
+        console.log(data);
         if (data.active === false) {
           return data.type;
         } else {
