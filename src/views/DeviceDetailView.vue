@@ -76,7 +76,7 @@
             margin-bottom: 10px;
           "
         >
-          Alerta de temperatura en (%):
+          Alerta de temperatura en:
         </p>
         <InputBasic
           :readonly="!(useAuhtStore().getUserState.role === UserRolEnum.ADMIN)"
